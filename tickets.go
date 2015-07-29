@@ -114,10 +114,13 @@ func (ts *ProblemService) Autocomplete(text string) ([]Ticket, error) {
 	return []Ticket{{}}, nil
 }
 
-func (ct *ChannelTwitter) Create(twitterStatusMessageId, monitorTwitterHandleId int64) (Ticket, error) {
-	return Ticket{}, nil
+/*
+  NOTE: user sibmitter is set to user making api call
+*/
+func CreateTicketFromTweet(twitterStatusMessageId, monitorTwitterHandleId int64) (Twicket, error) {
+	return Twicket{}, nil
 }
 
-func (ct *ChannelTwitter) Status() (status []string, err error) {
-	return status, err
+func (ct *Twicket) Statuses(commentIds []int64) (statuses []string, err error) {
+	return statuses, err
 }
