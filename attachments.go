@@ -13,5 +13,5 @@ type Attachment struct {
 }
 
 func Show(attachmentId int64) (Attachment, error) {
-  return Attachment{}, nil
+	return Attachment{}, nil
 }
