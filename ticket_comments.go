@@ -1,8 +1,9 @@
 package zapi
 
-import (
-	"time"
-)
+import ()
+
+type TicketComments struct {
+}
 
 type TicketComment struct {
 	Id          int64                  // Automatically assigned when the comment is created (readonly)
@@ -14,7 +15,7 @@ type TicketComment struct {
 	Attachments []Attachment           // Attachments, if any. See Attachment (readonly)
 	Via         ViaObject              // How the comment was created. See Via Object (readonly)
 	Metadata    map[string]interface{} // System information (web client, IP address, etc.) (readonly)
-	CreatedAt   time.Time              // The time the comment was created (readonly)
+	CreatedAt   Date                   // The time the comment was created (readonly)
 }
 
 func (t *Ticket) TicketComments() ([]TicketComment, error) {
@@ -22,9 +23,9 @@ func (t *Ticket) TicketComments() ([]TicketComment, error) {
 }
 
 func (tc *TicketComment) Redact(text string) (TicketComment, error) {
-	return tc, nil
+	return *tc, nil
 }
 
 func (tc *TicketComment) MakePrivate() (TicketComment, error) {
-	return tc, nil
+	return *tc, nil
 }

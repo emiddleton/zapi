@@ -1,15 +1,13 @@
 package zapi
 
-import (
-	"time"
-)
+import ()
 
 type TicketAudit struct {
 	Id        int64                    // Automatically assigned when creating audits
 	TicketId  int64                    // The ID of the associated ticket
-	Metadata  hash                     // Metadata for the audit, custom and system data
+	Metadata  map[string]interface{}   // Metadata for the audit, custom and system data
 	Via       ViaObject                // This object explains how this audit was created
-	CreatedAt time.Time                // The time the audit was created
+	CreatedAt Date                     // The time the audit was created
 	AuthorId  int64                    // The user who created the audit
 	events    []map[string]interface{} // An array of the events that happened in this audit. See Audit Events
 }
@@ -22,7 +20,7 @@ type CreateEvent struct {
 }
 
 type ChangeEvent struct {
-	Id            integer  // Automatically assigned when the event is created
+	Id            int64    // Automatically assigned when the event is created
 	Type          string   // Has the value Change
 	FieldName     string   // The name of the field that was changed
 	Value         []string // The value of the field that was changed
@@ -33,7 +31,6 @@ type CommentEvent struct {
 	Id            int64        // Automatically assigned when the event is created
 	Type          string       // Has the value VoiceComment
 	Data          string       // A hash of properties about the call
-	Public        bool         // If true, the ticket requester can see this comment
 	FormattedFrom string       // A formatted version of the phone number which dialed the call
 	FormattedTo   string       // A formatted version of the phone number which answered the call
 	Body          string       // The actual comment made by the author
@@ -83,9 +80,9 @@ type TicketSharingEvent struct {
 }
 
 type ErrorEvent struct {
-	Id      integer // Automatically assigned when the event is creating
-	Type    string  // Has the value Error
-	Message string  // The error message
+	Id      int64  // Automatically assigned when the event is creating
+	Type    string // Has the value Error
+	Message string // The error message
 }
 
 type TweetEvent struct {
