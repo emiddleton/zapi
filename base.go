@@ -58,8 +58,8 @@ type Filter struct {
 
 type Filters []Filter
 
-func (fs *Filters) toParams() (vals url.Values) {
-	for _, filter := range fs {
+func (filters Filters) toParams(vals *url.Values) *url.Values {
+	for _, filter := range filters {
 		vals.Add(filter.Key, filter.Value)
 	}
 	return vals

@@ -3,6 +3,7 @@ package zapi
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 type Tickets struct {
@@ -18,6 +19,8 @@ func NewTickets(path string, client *Client) Tickets {
 }
 
 type Ticket struct {
+	Class               *Tickets                 `json:"-"`                               // reference to parent class
+	Comments            *Comments                `json:"-"`                               // comments
 	Id                  int64                    `json:"id,omitempty"`                    // yes  no  Automatically assigned when creating tickets
 	Url                 string                   `json:"url,omitempty"`                   // yes  no  The API url of this ticket
 	ExternalId          *string                  `json:"external_id,omitempty"`           //  no  no  An id you can use to link Zendesk tickets to local records
@@ -62,7 +65,7 @@ type ChannelTwitter struct {
 
 func (ts *Tickets) List(filters Filters) (tickets []Ticket, err error) {
 	path := fmt.Sprintf("%s%s", ts.path, "/tickets.json")
-	responseBody, err := ts.client.Get(path, filters.toParam())
+	responseBody, err := ts.client.Get(path, filters.toParams(&url.Values{}))
 	if err != nil {
 		return []Ticket{}, err
 	}
