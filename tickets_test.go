@@ -3,6 +3,8 @@ package zapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Pallinder/go-randomdata"
+	"github.com/nu7hatch/gouuid"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -35,4 +37,20 @@ func TestTickets(t *testing.T) {
 		}
 		fmt.Printf("%s\n", ticketJson)
 	}
+
+	guid, err := uuid.NewV4()
+	guidStr := guid.String()
+	ticket, err := ts.Create(
+		Ticket{
+			Subject:     "Hell is freezing over I need a lighter",
+			Description: "Where can I find a lighter on ClassDo",
+			Requester: &User{
+				Name:  randomdata.FullName(randomdata.RandomGender),
+				Email: randomdata.Email(),
+			},
+			ExternalId: &guidStr,
+		},
+	)
+	fmt.Printf("%#v\n", ticket)
+
 }

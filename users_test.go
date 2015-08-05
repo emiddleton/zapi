@@ -3,6 +3,8 @@ package zapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Pallinder/go-randomdata"
+	"github.com/nu7hatch/gouuid"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -36,12 +38,13 @@ func TestUsers(t *testing.T) {
 		fmt.Printf("%s\n", userJson)
 	}
 
-	guid := "fdafdsfd"
+	guid, err := uuid.NewV4()
+	guidStr := guid.String()
 	user, err := us.Create(
 		User{
-			Name:       "test user",
-			Email:      "fdafds@fdafd.com",
-			ExternalId: &guid,
+			Name:       randomdata.FullName(randomdata.RandomGender),
+			Email:      randomdata.Email(),
+			ExternalId: &guidStr,
 			Verified:   true,
 		},
 	)
