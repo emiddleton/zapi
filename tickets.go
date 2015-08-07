@@ -20,7 +20,6 @@ func NewTickets(path string, client *Client) Tickets {
 
 type Ticket struct {
 	Class               *Tickets                 `json:"-"`                               // reference to parent class
-	Comments            *Comments                `json:"-"`                               // comments
 	Id                  int64                    `json:"id,omitempty"`                    // yes  no  Automatically assigned when creating tickets
 	Url                 string                   `json:"url,omitempty"`                   // yes  no  The API url of this ticket
 	ExternalId          *string                  `json:"external_id,omitempty"`           //  no  no  An id you can use to link Zendesk tickets to local records
@@ -63,13 +62,20 @@ type ProblemService struct {
 type ChannelTwitter struct {
 }
 
+func (t *Ticket) Comments() Comments {
+	return Comments{
+		path:   fmt.Sprintf("%s/tickets/%s", t.Class.path, t.Id),
+		client: t.Class.client,
+	}
+}
+
 func (ts *Tickets) List(filters Filters) (tickets []Ticket, err error) {
 	path := fmt.Sprintf("%s%s", ts.path, "/tickets.json")
 	responseBody, err := ts.client.Get(path, filters.toParams(&url.Values{}))
 	if err != nil {
 		return []Ticket{}, err
 	}
-	fmt.Printf("%s\n", string(responseBody))
+	// fmt.Printf("%s\n", string(responseBody))
 	ticketsPager := struct {
 		Count        int64    `json:"count"`
 		NextPage     *int64   `json:"next_page"`
@@ -100,20 +106,21 @@ func (ts *Tickets) Create(ticket Ticket) (Ticket, error) {
 	if err != nil {
 		return Ticket{}, err
 	}
-	fmt.Printf("request ->\n%s\n", string(reqBody))
+	// fmt.Printf("request ->\n%s\n", string(reqBody))
 
 	responseBody, err := ts.client.Post(path, nil, reqBody)
 	if err != nil {
 		return Ticket{}, err
 	}
 
-	fmt.Printf("response ->\n%s\n", string(responseBody))
+	// fmt.Printf("response ->\n%s\n", string(responseBody))
 	ticketWrapper := ticketWrap{ticket}
 	if err := json.Unmarshal(responseBody, &ticketWrapper); err != nil {
 		return ticketWrapper.WrappedTicket, err
 	}
 
 	return ticket, nil
+
 }
 
 func (ts *Tickets) CreateMany(tickets []Ticket) ([]Ticket, error) {

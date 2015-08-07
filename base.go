@@ -88,10 +88,10 @@ func (c *Client) Do(req *http.Request) ([]byte, error) {
 	} else {
 		req.SetBasicAuth(fmt.Sprintf("%s/token", c.Username), c.Token)
 	}
-	fmt.Printf("%#v\n", req.URL)
-	fmt.Printf("%#v\n", req)
+	//fmt.Printf("%#v\n", req.URL)
+	//fmt.Printf("%#v\n", req)
 	resp, err := c.httpClient.Do(req)
-	fmt.Printf("%#v\n", resp)
+	//fmt.Printf("%#v\n", resp)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (client *Client) Get(path string, params *url.Values) ([]byte, error) {
 	if params != nil {
 		urlRaw.RawQuery = params.Encode()
 	}
-	fmt.Printf("%s\n", urlRaw.String())
+	//fmt.Printf("%s\n", urlRaw.String())
 	req, err := http.NewRequest("GET", urlRaw.String(), nil)
 	if err != nil {
 		return nil, err
@@ -125,7 +125,7 @@ func (client *Client) Put(path string, params *url.Values, requestBody []byte) (
 	if params != nil {
 		urlRaw.RawQuery = params.Encode()
 	}
-	fmt.Printf("%s\n", urlRaw.String())
+	//fmt.Printf("%s\n", urlRaw.String())
 	req, err := http.NewRequest("PUT", urlRaw.String(), bytes.NewBufferString(string(requestBody)))
 	if err != nil {
 		return nil, err
@@ -142,7 +142,7 @@ func (client *Client) Post(path string, params *url.Values, requestBody []byte) 
 	if params != nil {
 		urlRaw.RawQuery = params.Encode()
 	}
-	fmt.Printf("%s\n", urlRaw.String())
+	//fmt.Printf("%s\n", urlRaw.String())
 	req, err := http.NewRequest("POST", urlRaw.String(), bytes.NewBufferString(string(requestBody)))
 	if err != nil {
 		return nil, err

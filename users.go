@@ -55,13 +55,21 @@ type User struct {
 	UserFields           map[string]interface{} `json:"user_fields,omitempty"`             // 	no 	no 	Custom fields for the user
 }
 
+func (u *User) Identities() Identities {
+	return Identities{
+		path:   fmt.Sprintf("%s/users/%d", u.Class.path, u.Id),
+		client: u.Class.client,
+	}
+}
+
 func (us *Users) List() (users []User, err error) {
 	path := fmt.Sprintf("%s%s", us.path, "/users.json")
 	responseBody, err := us.client.Get(path, nil)
 	if err != nil {
 		return []User{}, err
 	}
-	fmt.Printf("%s\n", string(responseBody))
+
+	// fmt.Printf("%s\n", string(responseBody))
 	usersPager := struct {
 		Count        int64  `json:"count"`
 		NextPage     *int64 `json:"next_page"`
@@ -94,7 +102,8 @@ func (us *Users) GetManyByExternalIds(externalIds []string) (users []User, err e
 	if err != nil {
 		return users, err
 	}
-	fmt.Printf("%s\n", string(responseBody))
+
+	// fmt.Printf("%s\n", string(responseBody))
 	usersPager := struct {
 		Users []User `json:"users"`
 	}{}
@@ -117,14 +126,14 @@ func (us *Users) Create(user User) (User, error) {
 	if err != nil {
 		return User{}, err
 	}
-	fmt.Printf("request ->\n%s\n", string(reqBody))
+	//fmt.Printf("request ->\n%s\n", string(reqBody))
 
 	responseBody, err := us.client.Post(path, nil, reqBody)
 	if err != nil {
 		return User{}, err
 	}
 
-	fmt.Printf("response ->\n%s\n", string(responseBody))
+	//fmt.Printf("response ->\n%s\n", string(responseBody))
 	userWrapper := userWrap{user}
 	if err := json.Unmarshal(responseBody, &userWrapper); err != nil {
 		return userWrapper.WrappedUser, err
@@ -195,14 +204,14 @@ func (u *User) Update() (User, error) {
 	if err != nil {
 		return User{}, err
 	}
-	fmt.Printf("request ->\n%s\n", string(reqBody))
+	// fmt.Printf("request ->\n%s\n", string(reqBody))
 
 	responseBody, err := u.Class.client.Put(path, nil, reqBody)
 	if err != nil {
 		return User{}, err
 	}
 
-	fmt.Printf("response ->\n%s\n", string(responseBody))
+	// fmt.Printf("response ->\n%s\n", string(responseBody))
 	userWrapper := userWrap{*u}
 	if err := json.Unmarshal(responseBody, &userWrapper); err != nil {
 		return userWrapper.WrappedUser, err
