@@ -2,7 +2,7 @@ package zapi
 
 import (
 	"encoding/json"
-	// "fmt"
+	//"fmt"
 )
 
 type Comments struct {
@@ -36,22 +36,26 @@ func (cs *Comments) Create(comment Comment) (Comment, error) {
 	type commentWrap struct {
 		WrappedComment Comment `json:"comment"`
 	}
-	reqBody, err := json.MarshalIndent(&commentWrap{comment}, "", "    ")
+	type ticketWrap struct {
+		WrappedTicket commentWrap `json:"ticket"`
+	}
+	reqBody, err := json.MarshalIndent(&ticketWrap{commentWrap{comment}}, "", "    ")
 	if err != nil {
 		return Comment{}, err
 	}
-	// fmt.Printf("request ->\n%s\n", string(reqBody))
+	//fmt.Printf("request ->\n%s\n", string(reqBody))
 
 	responseBody, err := cs.client.Put(cs.path, nil, reqBody)
 	if err != nil {
 		return Comment{}, err
 	}
 
-	// fmt.Printf("response ->\n%s\n", string(responseBody))
+	//fmt.Printf("response ->\n%s\n", string(responseBody))
 	commentWrapper := commentWrap{comment}
 	if err := json.Unmarshal(responseBody, &commentWrapper); err != nil {
 		return commentWrapper.WrappedComment, err
 	}
+	commentWrapper.WrappedComment.Class = cs
 
 	return commentWrapper.WrappedComment, nil
 

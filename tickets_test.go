@@ -26,7 +26,7 @@ func TestTickets(t *testing.T) {
 		client: &c,
 	}
 
-	tickets, err := ts.List()
+	tickets, err := ts.List(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,8 +42,10 @@ func TestTickets(t *testing.T) {
 	guidStr := guid.String()
 	ticket, err := ts.Create(
 		Ticket{
-			Subject:     "Hell is freezing over I need a lighter",
-			Description: "Where can I find a lighter on ClassDo",
+			Subject: "Hell is freezing over I need a lighter",
+			Comment: &Comment{
+				Body: "Where can I find a lighter on ClassDo",
+			},
 			Requester: &User{
 				Name:  randomdata.FullName(randomdata.RandomGender),
 				Email: randomdata.Email(),

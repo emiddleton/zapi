@@ -18,39 +18,45 @@ func NewTickets(path string, client *Client) Tickets {
 	}
 }
 
+type CustomField struct {
+	Id    int64       `json:"id"`
+	Value interface{} `json:"value"`
+}
+
 type Ticket struct {
-	Class               *Tickets                 `json:"-"`                               // reference to parent class
-	Id                  int64                    `json:"id,omitempty"`                    // yes  no  Automatically assigned when creating tickets
-	Url                 string                   `json:"url,omitempty"`                   // yes  no  The API url of this ticket
-	ExternalId          *string                  `json:"external_id,omitempty"`           //  no  no  An id you can use to link Zendesk tickets to local records
-	Type                string                   `json:"type"`                            //  no  no  The type of this ticket, i.e. "problem", "incident", "question" or "task"
-	Subject             string                   `json:"subject"`                         //  no  no  The value of the subject field for this ticket
-	RawSubject          string                   `json:"raw_subject"`                     //  no  no  The dynamic content placeholder, if present, or the "subject" value, if not. See Dynamic Content
-	Description         string                   `json:"description"`                     // yes  no  The first comment on the ticket
-	Priority            *string                  `json:"priority"`                        //  no  no  Priority, defines the urgency with which the ticket should be addressed: "urgent", "high", "normal", "low"
-	Status              string                   `json:"status"`                          //  no  no  The state of the ticket, "new", "open", "pending", "hold", "solved", "closed"
-	Recipient           *string                  `json:"recipients,omitempty"`            //  no  no  The original recipient e-mail address of the ticket
-	RequesterId         *int64                   `json:"requester_id"`                    //  no yes  The user who requested this ticket
-	Requester           *User                    `json:"requester,omitempty"`             //  no yes  The literal requesting user
-	SubmitterId         int64                    `json:"submitter_id,omitempty"`          //  no  no  The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket.
-	AssigneeId          int64                    `json:"assignee_id,omitempty"`           //  no  no  What agent is currently assigned to the ticket
-	OrganizationId      *int64                   `json:"organization_id,omitempty"`       // yes  no  The organization of the requester
-	GroupId             int64                    `json:"group_id,omitempty"`              //  no  no  The group this ticket is assigned to
-	CollaboratorIds     []int64                  `json:"collaborator_ids,omitempty"`      //  no  no  Who are currently CC'ed on the ticket
-	ForumTopicId        *int64                   `json:"forum_topic_id,omitempty"`        //  no  no  The topic this ticket originated from, if any
-	ProblemId           *int64                   `json:"problem_id,omitempty"`            //  no  no  The problem this incident is linked to, if any
-	HasIncidents        bool                     `json:"has_incidents"`                   // yes  no  Is true of this ticket has been marked as a problem, false otherwise
-	DueAt               *Date                    `json:"due_at,omitempty"`                //  no  no  If this is a ticket of type "task" it has a due date. Due date format uses ISO 8601 format.
-	Tags                []string                 `json:"tags,omitempty"`                  //  no  no  The array of tags applied to this ticket
-	Via                 *ViaObject               `json:"via,omitempty"`                   // yes  no  This object explains how the ticket was created
-	CustomFields        []map[string]interface{} `json:"custom_fields"`                   //  no  no  The custom fields of the ticket
-	SatisfactionRating  map[string]interface{}   `json:"satisfaction_rating,omitempty"`   // yes  no  The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
-	SharingAgreementIds []string                 `json:"sharing_agreement_ids,omitempty"` // yes  no  The ids of the sharing agreements used for this ticket
-	FollowupIds         *[]int64                 `json:"followup_ids,omitempty"`          // yes  no  The ids of the followups created from this ticket - only applicable for closed tickets
-	TicketFormId        *int64                   `json:"ticket_form_id,omitempty"`        //  no  no  The id of the ticket form to render for this ticket - only applicable for enterprise accounts
-	BrandId             int64                    `json:"brand_id,omitempty"`              //  no  no  The id of the brand this ticket is associated with - only applicable for enterprise accounts
-	CreatedAt           *Date                    `json:"created_at,omitempty"`            // yes  no  When this record was created
-	UpdatedAt           *Date                    `json:"updated_at,omitempty"`            // yes  no  When this record last got updated
+	Class               *Tickets               `json:"-"`                               // reference to parent class
+	Id                  int64                  `json:"id,omitempty"`                    // yes  no  Automatically assigned when creating tickets
+	Url                 string                 `json:"url,omitempty"`                   // yes  no  The API url of this ticket
+	ExternalId          *string                `json:"external_id,omitempty"`           //  no  no  An id you can use to link Zendesk tickets to local records
+	Type                string                 `json:"type"`                            //  no  no  The type of this ticket, i.e. "problem", "incident", "question" or "task"
+	Subject             string                 `json:"subject"`                         //  no  no  The value of the subject field for this ticket
+	RawSubject          string                 `json:"raw_subject"`                     //  no  no  The dynamic content placeholder, if present, or the "subject" value, if not. See Dynamic Content
+	Description         *string                `json:"description,omitempty"`           // yes  no  The first comment on the ticket
+	Comment             *Comment               `json:"comment"`                         // comment
+	Priority            *string                `json:"priority"`                        //  no  no  Priority, defines the urgency with which the ticket should be addressed: "urgent", "high", "normal", "low"
+	Status              string                 `json:"status"`                          //  no  no  The state of the ticket, "new", "open", "pending", "hold", "solved", "closed"
+	Recipient           *string                `json:"recipients,omitempty"`            //  no  no  The original recipient e-mail address of the ticket
+	RequesterId         *int64                 `json:"requester_id"`                    //  no yes  The user who requested this ticket
+	Requester           *User                  `json:"requester,omitempty"`             //  no yes  The literal requesting user
+	SubmitterId         int64                  `json:"submitter_id,omitempty"`          //  no  no  The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket.
+	AssigneeId          int64                  `json:"assignee_id,omitempty"`           //  no  no  What agent is currently assigned to the ticket
+	OrganizationId      *int64                 `json:"organization_id,omitempty"`       // yes  no  The organization of the requester
+	GroupId             int64                  `json:"group_id,omitempty"`              //  no  no  The group this ticket is assigned to
+	CollaboratorIds     []int64                `json:"collaborator_ids,omitempty"`      //  no  no  Who are currently CC'ed on the ticket
+	ForumTopicId        *int64                 `json:"forum_topic_id,omitempty"`        //  no  no  The topic this ticket originated from, if any
+	ProblemId           *int64                 `json:"problem_id,omitempty"`            //  no  no  The problem this incident is linked to, if any
+	HasIncidents        bool                   `json:"has_incidents"`                   // yes  no  Is true of this ticket has been marked as a problem, false otherwise
+	DueAt               *Date                  `json:"due_at,omitempty"`                //  no  no  If this is a ticket of type "task" it has a due date. Due date format uses ISO 8601 format.
+	Tags                []string               `json:"tags,omitempty"`                  //  no  no  The array of tags applied to this ticket
+	Via                 *ViaObject             `json:"via,omitempty"`                   // yes  no  This object explains how the ticket was created
+	CustomFields        []CustomField          `json:"custom_fields"`                   //  no  no  The custom fields of the ticket
+	SatisfactionRating  map[string]interface{} `json:"satisfaction_rating,omitempty"`   // yes  no  The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
+	SharingAgreementIds []string               `json:"sharing_agreement_ids,omitempty"` // yes  no  The ids of the sharing agreements used for this ticket
+	FollowupIds         *[]int64               `json:"followup_ids,omitempty"`          // yes  no  The ids of the followups created from this ticket - only applicable for closed tickets
+	TicketFormId        *int64                 `json:"ticket_form_id,omitempty"`        //  no  no  The id of the ticket form to render for this ticket - only applicable for enterprise accounts
+	BrandId             int64                  `json:"brand_id,omitempty"`              //  no  no  The id of the brand this ticket is associated with - only applicable for enterprise accounts
+	CreatedAt           *Date                  `json:"created_at,omitempty"`            // yes  no  When this record was created
+	UpdatedAt           *Date                  `json:"updated_at,omitempty"`            // yes  no  When this record last got updated
 }
 
 type Twicket struct {
@@ -64,7 +70,7 @@ type ChannelTwitter struct {
 
 func (t *Ticket) Comments() Comments {
 	return Comments{
-		path:   fmt.Sprintf("%s/tickets/%s", t.Class.path, t.Id),
+		path:   fmt.Sprintf("%s/tickets/%d", t.Class.path, t.Id),
 		client: t.Class.client,
 	}
 }
@@ -85,7 +91,11 @@ func (ts *Tickets) List(filters Filters) (tickets []Ticket, err error) {
 	if err := json.Unmarshal(responseBody, &ticketsPager); err != nil {
 		return tickets, err
 	}
-	return ticketsPager.Tickets, err
+	for _, ticket := range ticketsPager.Tickets {
+		ticket.Class = ts
+		tickets = append(tickets, ticket)
+	}
+	return tickets, err
 }
 
 func (ts *Tickets) Get(id int64) (ticket Ticket, err error) {
