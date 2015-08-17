@@ -28,7 +28,7 @@ type Ticket struct {
 	Id                  int64                  `json:"id,omitempty"`                    // yes  no  Automatically assigned when creating tickets
 	Url                 string                 `json:"url,omitempty"`                   // yes  no  The API url of this ticket
 	ExternalId          *string                `json:"external_id,omitempty"`           //  no  no  An id you can use to link Zendesk tickets to local records
-	Type                string                 `json:"type"`                            //  no  no  The type of this ticket, i.e. "problem", "incident", "question" or "task"
+	Type                *string                `json:"type,omitempty"`                  //  no  no  The type of this ticket, i.e. "problem", "incident", "question" or "task"
 	Subject             string                 `json:"subject"`                         //  no  no  The value of the subject field for this ticket
 	RawSubject          string                 `json:"raw_subject"`                     //  no  no  The dynamic content placeholder, if present, or the "subject" value, if not. See Dynamic Content
 	Description         *string                `json:"description,omitempty"`           // yes  no  The first comment on the ticket
@@ -137,8 +137,26 @@ func (ts *Tickets) CreateMany(tickets []Ticket) ([]Ticket, error) {
 	return tickets, nil
 }
 
-func (ts *Tickets) Update(ticket Ticket) (Ticket, error) {
-	return ticket, nil
+func (t *Ticket) Update() (Ticket, error) {
+	path := fmt.Sprintf("%s/tickets/%d.json", t.Class.path, t.Id)
+	type wrap struct {
+		Wrapped Ticket `json:"ticket"`
+	}
+	reqBody, err := json.MarshalIndent(&wrap{*t}, "", "    ")
+	if err != nil {
+		return Ticket{}, err
+	}
+	fmt.Printf("request ->\n%s\n", string(reqBody))
+
+	responseBody, err := t.Class.client.Put(path, nil, reqBody)
+	if err != nil {
+		return Ticket{}, err
+	}
+
+	fmt.Printf("response ->\n%s\n", string(responseBody))
+	wrapper := wrap{*t}
+	err = json.Unmarshal(responseBody, &wrapper)
+	return wrapper.Wrapped, err
 }
 
 func (ts *Tickets) UpdateMany(tickets []Ticket) ([]Ticket, error) {
