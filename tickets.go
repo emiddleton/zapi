@@ -146,14 +146,14 @@ func (t *Ticket) Update() (Ticket, error) {
 	if err != nil {
 		return Ticket{}, err
 	}
-	fmt.Printf("request ->\n%s\n", string(reqBody))
+	// fmt.Printf("request ->\n%s\n", string(reqBody))
 
 	responseBody, err := t.Class.client.Put(path, nil, reqBody)
 	if err != nil {
 		return Ticket{}, err
 	}
 
-	fmt.Printf("response ->\n%s\n", string(responseBody))
+	// fmt.Printf("response ->\n%s\n", string(responseBody))
 	wrapper := wrap{*t}
 	err = json.Unmarshal(responseBody, &wrapper)
 	return wrapper.Wrapped, err
